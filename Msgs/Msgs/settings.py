@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_mongoengine',
     'myApp.apps.MyAppConfig',
+    'logs.apps.LogsConfig',
 )
 
 MIDDLEWARE_CLASSES = (
