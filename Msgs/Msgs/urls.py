@@ -9,4 +9,5 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('myApp.urls')),
+    url(r'^log/', include('logs.urls')),
 ]

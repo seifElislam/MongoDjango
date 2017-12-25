@@ -135,5 +135,6 @@ MONGODB_DATABASES = {
 
 mongoengine.connect(
     db=MONGODB_DATABASES['default']['name'],
-    host=MONGODB_DATABASES['default']['host']
+    host=MONGODB_DATABASES['default']['host'],
+    port=MONGODB_DATABASES['default']['port'],
 )

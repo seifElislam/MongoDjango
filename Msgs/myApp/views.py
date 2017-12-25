@@ -8,6 +8,7 @@ from models import Message
 from serializers import MessageSerializer
 from rest_framework import status
 from rest_framework.response import Response
+from logs.models import Log
 
 
 @csrf_exempt
@@ -36,12 +37,14 @@ def message_list(request):
     if request.method == 'GET':
         snippets = Message.objects.all()
         serializer = MessageSerializer(snippets, many=True)
+        add_log('get all msgs')
         return Response(serializer.data)
 
     elif request.method == 'POST':
         serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
+            add_log('new post')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -58,6 +61,7 @@ def snippet_detail(request, pk):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
+        add_log('retrieve msg with id=%s'%(str(pk)))
         serializer = MessageSerializer(snippet)
         return Response(serializer.data)
 
@@ -65,9 +69,18 @@ def snippet_detail(request, pk):
         serializer = MessageSerializer(snippet, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            add_log('put msg with id=%s' % (str(pk)))
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         snippet.delete()
+        add_log('delete msg with id=%s' % (str(pk)))
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+def add_log(title):
+    log = Log.objects.create(
+        title=title
+    )
+    log.save()
