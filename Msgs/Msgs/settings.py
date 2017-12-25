@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import mongoengine
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'v)1bo%vu2690&1-%ryl5^0p=pv0l84v_!os89%i415b$6k5_(l'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -120,3 +121,18 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ),
 }
+
+
+MONGODB_DATABASES = {
+    "default": {
+        "name": "django_logs",
+        "host": "localhost",
+        "port": 27000,
+        "tz_aware": True,  # if you use timezones in django (USE_TZ = True)
+    },
+}
+
+mongoengine.connect(
+    db=MONGODB_DATABASES['default']['name'],
+    host=MONGODB_DATABASES['default']['host']
+)

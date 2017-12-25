@@ -1,3 +1,7 @@
-Django==1.8
+Django==1.11.3
 django-rest-framework-mongoengine==3.3.1
 djangorestframework==3.7.7
+mongoengine==0.15.0
+pymongo==3.6.0
+pytz==2017.3
+six==1.11.0
