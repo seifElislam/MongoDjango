@@ -1,4 +1,5 @@
-from django.shortcuts import render
+import datetime
+
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
@@ -8,7 +9,7 @@ from models import Message
 from serializers import MessageSerializer
 from rest_framework import status
 from rest_framework.response import Response
-from logs.models import Log
+from logs.models import Log, Action
 
 
 @csrf_exempt
@@ -21,6 +22,7 @@ def login(request):
         user = authenticate(username=username, password=password)
         if user:
             print(200)
+            add_log("new login", "%s has login at %s" %(username, str(datetime.datetime.now)))
             return JsonResponse({'msg': 'hello '+username}, status=200)
         else:
             print(403)
@@ -37,14 +39,14 @@ def message_list(request):
     if request.method == 'GET':
         snippets = Message.objects.all()
         serializer = MessageSerializer(snippets, many=True)
-        add_log('get all msgs')
+        add_log('get all msgs', " list method")
         return Response(serializer.data)
 
     elif request.method == 'POST':
         serializer = MessageSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            add_log('new post')
+            add_log('new post', "user created a new post")
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -79,8 +81,10 @@ def snippet_detail(request, pk):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-def add_log(title):
-    log = Log.objects.create(
-        title=title
-    )
+def add_log(title, description=''):
+    action = Action()
+    action.description = description
+    log = Log()
+    log.title = title
+    log.actions.append(action)
     log.save()
